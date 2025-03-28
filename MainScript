@@ -1,0 +1,53 @@
+local Dandy = game.Workspace.Elevators.Elevator.DandyStore.DandyShop
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Function to apply the changes
+local function applyDandyAppearance()
+    local DHAir = Dandy.Hair:Clone()  -- Clone Dandy's hair instead of moving it
+    local CHAir = character:FindFirstChild("Hair")
+
+    for _, partA in ipairs(Dandy:GetDescendants()) do
+        local partB = character:FindFirstChild(partA.Name, true)
+
+        if partB then
+            -- Clone instead of moving Dandy's hair to keep his intact
+            DHAir.Parent = character
+            DHAir.Joint.Part0 = character.Head
+
+            -- Apply Dandy's animations & textures to the player
+            character.Animate.idle.Animation1.AnimationId = "rbxassetid://16496520991"
+            character.Animate.idle.Animation2.AnimationId = "rbxassetid://16496520991"
+            character.Animate.run.RunAnim.AnimationId = "rbxassetid://16496812530"
+            character.Config.NormalTexture.Texture = "rbxassetid://16496414911"
+            character.Config.HurtTexture.Texture = "rbxassetid://17561468145"
+
+            -- Remove the player's old hair
+            if CHAir then
+                CHAir:Destroy()
+            end
+
+            -- Only modify the player's character, leave Dandy unchanged
+            if partA:IsA("MeshPart") and partB:IsA("MeshPart") then
+                partB.MeshId = partA.MeshId
+                partB.TextureID = partA.TextureID
+            end
+
+            if partA:IsA("SpecialMesh") and partB:IsA("SpecialMesh") then
+                partB.MeshId = partA.MeshId
+            end
+        end
+    end
+
+    -- Add new animation modification
+    local DecodeAnimation = game.Workspace.InGamePlayers.DandyToonHandIer.Animations:FindFirstChild("Decode")
+    if DecodeAnimation and DecodeAnimation:IsA("Animation") then
+        DecodeAnimation.AnimationId = "rbxassetid://16496852675"
+    end
+end
+
+-- Continuously loop to apply the appearance every 0.01 seconds
+while true do
+    applyDandyAppearance()
+    wait(0.01) -- Extremely fast update rate
+end
